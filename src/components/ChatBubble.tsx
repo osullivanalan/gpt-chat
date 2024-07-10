@@ -13,6 +13,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+
+//todo support toggling dark and light modes with the overall app theme
 import { solarizedlight, gruvboxDark  } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
 

@@ -89,7 +89,6 @@ export default class IndexedDBHelper {
       const request = settingsStore.put({ id: '1', ...settings });
   
       request.onsuccess = function () {
-        console.log(`Save success ${JSON.stringify(settings)}`);
         resolve();
       };
   
