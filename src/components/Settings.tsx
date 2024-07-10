@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -19,38 +19,39 @@ import Card from '@mui/joy/Card';
 import CardActions from '@mui/joy/CardActions';
 
 import IndexedDBHelper from '../IndexedDBHelper'; // Adjust the path as needed
-import { SettingsContext } from '../contexts/SettingsContext'; // Adjust the path as needed
+
 import ModelSelector from './ModelSelector';
+import { SettingsContext } from '../contexts/SettingsContext';
+import { SettingProps } from '../types';
 
 
-export default function Settings({settings}) {
-    const settingsContext = React.useContext(SettingsContext);
+export default function Settings() {
+
+    const settingsContext = useContext(SettingsContext);
+
     if (!settingsContext) {
-        throw new Error("Settings must be used within a SettingsContext.Provider");
+        throw new Error('Settings must be used within a SettingsProvider');
     }
-    const { openSettings, setSettingsOpen } = settingsContext;
-    const [apiKey, setApiKey] = useState('');
-    const [temperature, setTemperature] = useState(0);
-    const [model, setModel] = useState('');
 
-    setApiKey(settings.apiKey);
-    setTemperature(settings.temperature);
-    setModel(settings.model);
+    const { openSettings, setSettingsOpen, settings, setSettings } = settingsContext;
 
     async function saveSettings() {
-        console.log(`Setting key, temp and model ${model}`);
-        await IndexedDBHelper.setSettings(apiKey, temperature, model);
-        setSettingsOpen(false);
+        if(settings){
+            await IndexedDBHelper.setSettings(settings);
+            setSettingsOpen(false);
+        }
     }
 
-    const handleModelChange = (
-        event: React.SyntheticEvent | null,
-        newValue: string,
-      ) => {
-        //alert(`You chose "${newValue}"`);
-        setModel(newValue);
-        //console.log(`Model change is: ${model}`);
-      };
+    function handleInputChange(event) {
+        const {name, value} = event.target;
+        //console.log(`name: ${name} value ${value}`);
+        setSettings((prevState) => 
+            prevState 
+              ? { ...prevState, [name]: value } as SettingProps
+              : { [name]: value } as SettingProps
+          );
+     
+      }
 
     return (
         <Modal
@@ -108,18 +109,18 @@ export default function Settings({settings}) {
                                         <FormControl
                                             sx={{ display: { sm: 'flex-column', md: 'flex-row' }, gap: 2 }}
                                         >
-                                            <Input size="sm" placeholder="API Key" value={apiKey} onChange={e => setApiKey(e.target.value)} />
+                                            <Input name="apiKey" size="sm" placeholder="API Key" value={settings?.apiKey} onChange={handleInputChange} />
 
                                         </FormControl>
                                         <FormLabel>Temperature</FormLabel>
                                         <FormControl
                                             sx={{ display: { sm: 'flex-column', md: 'flex-row' }, gap: 2 }}
                                         >
-                                            <Input size="sm" placeholder="Temperature" value={temperature} onChange={e => setTemperature(Number(e.target.value))} />
+                                            <Input name="temperature" size="sm" placeholder="Temperature" value={settings?.temperature} onChange={handleInputChange} />
 
                                         </FormControl>
                                         <FormLabel>Model</FormLabel>
-                                        <ModelSelector value={model} onChange={handleModelChange}></ModelSelector>
+                                        <ModelSelector value={settings?.model} onChange={handleInputChange}></ModelSelector>
                                     </Stack>
 
                                 </Stack>
@@ -127,7 +128,7 @@ export default function Settings({settings}) {
 
                             <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
 
-                                <Button size="sm" variant="solid" onClick={saveSettings}>
+                                <Button size="sm" variant="solid" onClick={() => { saveSettings() }}>
                                     Save
                                 </Button>
                             </CardActions>

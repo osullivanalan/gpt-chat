@@ -1,11 +1,10 @@
-import { ChatProps } from './types';
+import { ChatProps, SettingProps } from './types';
 
 const defaultChat: ChatProps = {
   id: '1',
   sender: {
     name: 'GPT',
     username: '@gpt',
-    avatar: '/static/images/avatar/7.jpg',
     online: false,
   },
   messages: [
@@ -14,7 +13,7 @@ const defaultChat: ChatProps = {
       content: 'Hello, how can I assist today?',
       timestamp: new Date().toISOString(),
       sender: {
-        name: 'GPT'
+        name: 'GPT',
       },
     },
   ],
@@ -82,18 +81,18 @@ export default class IndexedDBHelper {
   }
 
 
-  static async setSettings(apiKey: string, temperature: number, model: string) {
+  static async setSettings(settings: SettingProps) {
     const db = await IndexedDBHelper.initDB();
     return new Promise<void>((resolve, reject) => {
       const transaction = db.transaction('settings', 'readwrite');
-      const settings = transaction.objectStore('settings');
-      const request = settings.put({ id: '1', apiKey, temperature, model });
-
+      const settingsStore = transaction.objectStore('settings');
+      const request = settingsStore.put({ id: '1', ...settings });
+  
       request.onsuccess = function () {
-        console.log(`Save success ${temperature} - ${model}`);
+        console.log(`Save success ${JSON.stringify(settings)}`);
         resolve();
       };
-
+  
       request.onerror = function () {
         reject(request.error);
       };

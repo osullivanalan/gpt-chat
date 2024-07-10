@@ -7,6 +7,7 @@ import ChatsPane from './ChatsPane';
 import { ChatProps, MessageProps } from '../types';
 import IndexedDBHelper from '../IndexedDBHelper';
 import { ChatGPTAPI } from '../ChatGPTAPI';
+import useTypewriterEffect from '../utils/typewritereffect'; // Import the custom hook
 
 export default function MyProfile() {
   const [chats, setChats] = useState<ChatProps[]>([]);
@@ -25,7 +26,6 @@ export default function MyProfile() {
   if (!selectedChat) {
     return null; // or a loading indicator
   }
-
 
 
   const handleNewMessage = async (content: string) => {

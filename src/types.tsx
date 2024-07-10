@@ -1,7 +1,8 @@
+import { ReactNode } from "react";
+
 export type UserProps = {
   name: string;
   username?: string;
-  avatar?: string;
   online?: boolean;
 };
 
@@ -18,11 +19,26 @@ export type MessageProps = {
   };
 };
 
+
 export type SettingProps = {
-  apiKey:string,
-  temperature: number,
-  model: string,
+  apiKey: string;
+  temperature: number;
+  model: string;
+  topp: number;
+  maxtokens: number;
+  presencePenalty: number;
+  frequencePenalty: number;
+  historyCompression: number;
+  sendMemory: boolean;
 }
+
+export type SettingsContextProps = {
+  openSettings: boolean;
+  setSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  settings:SettingProps | null;
+  //setSettings: (settings: SettingProps | null) => void;
+  setSettings: React.Dispatch<React.SetStateAction<SettingProps | null>>;
+};
 
 export type ChatProps = {
   id: string;

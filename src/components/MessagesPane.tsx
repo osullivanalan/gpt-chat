@@ -5,19 +5,36 @@ import Stack from '@mui/joy/Stack';
 //import AvatarWithStatus from './AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
+import MessageItem from './MessageItem';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { ChatProps, MessageProps } from '../types';
+import { formatDateTimeString } from '../utils';
 
 type MessagesPaneProps = {
   chat: ChatProps;
   handleNewMessage: (message: string) => void;
 };
 
+
+
 export default function MessagesPane(props: MessagesPaneProps) {
   const { chat, handleNewMessage } = props;
   const [chatMessages, setChatMessages] = React.useState(chat.messages);
   const [textAreaValue, setTextAreaValue] = React.useState('');
-  
+
+  const [previewMessage, setPreviewMessage] = React.useState('');
+
+  const previewMessageProps: MessageProps = {
+    id: 'preview',
+    content: previewMessage,
+    timestamp: formatDateTimeString(new Date().toISOString()),
+    sender: {
+      name: 'You',  // Replace with the actual user's name
+      // Add more properties as needed
+    },
+    // Add more properties as needed
+  };
+
   React.useEffect(() => {
     setChatMessages(chat.messages);
   }, [chat.messages]);
@@ -44,31 +61,32 @@ export default function MessagesPane(props: MessagesPaneProps) {
         }}
       >
         <Stack spacing={2} justifyContent="flex-end">
-          {chatMessages.map((message: MessageProps, index: number) => {
-            const isYou = message.sender.name === 'You';
-            return (
-              <Stack
-                key={index}
-                direction="row"
-                spacing={2}
-                flexDirection={isYou ? 'row-reverse' : 'row'}
-              >
-                {/*message.sender !== 'You' && (
-                  <AvatarWithStatus
-                    online={message.sender.online}
-                    src={message.sender.avatar}
-                  />
-                )*/}
-                <ChatBubble variant={isYou ? 'sent' : 'received'} {...message} />
-              </Stack>
-            );
-          })}
+
+          {chatMessages.map((message: MessageProps) => (
+            <MessageItem key={message.id} message={message} />
+          ))}
+
+
+          {/* as user is typing display the preview 
+          {previewMessage && (
+            <Stack
+              justifyContent="flex-end"
+              direction="row"
+              spacing={2}
+              flexDirection='row'
+            >
+              <ChatBubble variant='sent'  {...previewMessageProps} />
+            </Stack>
+          )}
+            */}
         </Stack>
       </Box>
+
       <MessageInput
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
         handleNewMessage={handleNewMessage}
+
       />
     </Sheet>
   );

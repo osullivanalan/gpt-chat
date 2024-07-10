@@ -9,22 +9,26 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import SettingsApplicationsRounded from '@mui/icons-material/SettingsApplicationsRounded';
 
+import gptLogo from '../contexts/openailogo.png'
+
 import { UserProps } from '../types';
 import { toggleMessagesPane } from '../utils';
-import { SettingsContext } from '../contexts/SettingsContext'; // Adjust the path as needed
-
+import { useContext, useState } from 'react';
+import { SettingsContext } from '../contexts/SettingsContext';
 type MessagesPaneHeaderProps = {
   sender: UserProps;
 };
 
 export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
   const { sender } = props;
-  const settingsContext = React.useContext(SettingsContext);
-  if (!settingsContext) {
-    throw new Error("MessagesPaneHeader must be used within a SettingsContext.Provider");
-  }
-  const { openSettings, setSettingsOpen, settings } = settingsContext;
+  
+  const settingsContext = useContext(SettingsContext);
 
+    if (!settingsContext) {
+        throw new Error('Settings must be used within a SettingsProvider');
+    }
+
+    const { openSettings, setSettingsOpen, settings } = settingsContext;
   return (
     <Stack
       direction="row"
@@ -49,7 +53,7 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
         >
           <ArrowBackIosNewRoundedIcon />
         </IconButton>
-        <Avatar size="lg" src={sender.avatar} />
+        <Avatar size="lg" src={gptLogo} />
         <div>
           <Typography
             fontWeight="lg"
@@ -77,7 +81,7 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
           >
             {sender.name}
           </Typography>
-          <Typography level="body-sm">{settings.model}</Typography>
+          <Typography level="body-sm">{settings?.model}</Typography>
         </div>
       </Stack>
       <Stack spacing={1} direction="row" alignItems="center">
