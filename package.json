@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "vite --host --open",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "vite build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -23,8 +25,10 @@
   "devDependencies": {
     "@types/node": "^20.14.9",
     "@vitejs/plugin-react": "^4.0.0",
+    "gh-pages": "^6.1.1",
     "vite": "^4.3.9"
   },
   "keywords": [],
-  "description": ""
+  "description": "",
+  "homepage": "https://osullivanalan.github.io/gpt-chat"
 }
