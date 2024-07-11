@@ -21,6 +21,7 @@ export default function MessagesPane(props: MessagesPaneProps) {
   const { chat, handleNewMessage } = props;
   const [chatMessages, setChatMessages] = React.useState(chat.messages);
   const [textAreaValue, setTextAreaValue] = React.useState('');
+  const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
 
   const [previewMessage, setPreviewMessage] = React.useState('');
 
@@ -38,6 +39,20 @@ export default function MessagesPane(props: MessagesPaneProps) {
   React.useEffect(() => {
     setChatMessages(chat.messages);
   }, [chat.messages]);
+
+  // Effect to scroll to bottom when chatMessages state changes
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
+
+  // Scroll to bottom function - FF flex don't column-reverse don't mix
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      console.log(`scroll to bottom ${messagesEndRef.current}`)
+      messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+      //messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  };
 
   return (
     <Sheet
@@ -57,7 +72,7 @@ export default function MessagesPane(props: MessagesPaneProps) {
           px: 2,
           py: 3,
           overflowY: 'scroll',
-          flexDirection: 'column-reverse',
+          flexDirection: 'column',
         }}
       >
         <Stack spacing={2} justifyContent="flex-end">
@@ -79,15 +94,19 @@ export default function MessagesPane(props: MessagesPaneProps) {
             </Stack>
           )}
             */}
+            
+        {/* Add a reference to the bottom of the messages area */}
+       <div ref={messagesEndRef}></div>
         </Stack>
       </Box>
-
+      
       <MessageInput
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
         handleNewMessage={handleNewMessage}
 
       />
+      
     </Sheet>
   );
 }

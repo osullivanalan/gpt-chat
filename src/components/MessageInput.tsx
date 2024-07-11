@@ -28,12 +28,12 @@ export default function MessageInput(props: MessageInputProps) {
 
   const [selectedResultIndex, setSelectedResultIndex] = React.useState(0);
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowUp') {
+    const handleKeyDown = (event: { key: string; }) => {
+      if (event.key === 'ArrowUp') {
         setSelectedResultIndex((oldIndex) => Math.max(0, oldIndex - 1));
-      } else if (e.key === 'ArrowDown') {
+      } else if (event.key === 'ArrowDown') {
         setSelectedResultIndex((oldIndex) => Math.min(searchResults.length - 1, oldIndex + 1));
-      } else if (e.key === 'Enter') {
+      } else if (event.key === 'Enter') {
         setTextAreaValue(searchResults[selectedResultIndex].prompt);
         setIsCommandMode(false);
         setSearchResults([]);
@@ -45,7 +45,7 @@ export default function MessageInput(props: MessageInputProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [searchResults, selectedResultIndex]);
 
-  function handleTextAreaChange(event) {
+  function handleTextAreaChange(event: { target: { value: any; }; }) {
     const value = event.target.value;
     setTextAreaValue(value);
 
@@ -62,7 +62,7 @@ export default function MessageInput(props: MessageInputProps) {
     }
   }
 
-  function handleTextAreaKeyDown(event) {
+  function handleTextAreaKeyDown(event: { key: string; metaKey: any; ctrlKey: any; }) {
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
       handleClick();
     } else if (event.key === 'Escape' && isCommandMode) {
