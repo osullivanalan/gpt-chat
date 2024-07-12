@@ -11,6 +11,8 @@ import { ToastContainer } from 'react-toastify';
 //import { useState } from 'react';
 import Settings from './components/Settings';
 import { SettingsProvider } from './contexts/SettingsProvider'
+import Sidebar from './components/Sidebar';
+import './index.css';
 
 
 export default function App() {
@@ -20,7 +22,7 @@ export default function App() {
       <CssVarsProvider disableTransitionOnChange defaultMode="dark">
         <CssBaseline />
         <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
-          {/*<Sidebar />*/}
+         {/* <Sidebar /> */}
           <Header />
           <Box component="main" className="MainContent" sx={{ flex: 1 }}>
             <MyDbMessages />

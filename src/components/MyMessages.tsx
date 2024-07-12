@@ -21,7 +21,7 @@ export default function MyProfile() {
       id: Date.now().toString(), // Generate a unique ID for the new message
       content,
       timestamp: new Date().toISOString(),
-      sender: 'You',
+      sender: {name: 'You'},
     };
   
     // Update the selected chat with the new message
@@ -41,7 +41,7 @@ export default function MyProfile() {
       id: Date.now().toString(), // Generate a unique ID for the GPT message
       content: gptResponse,
       timestamp: new Date().toISOString(),
-      sender: 'GPT',
+      sender: {name: 'GPT'},
     };
   
     updatedChat.messages.push(gptMessage);
@@ -85,6 +85,7 @@ export default function MyProfile() {
       >
         <ChatsPane
           chats={chats}
+          setChats={setChats}
           selectedChatId={selectedChat.id}
           setSelectedChat={setSelectedChat}
         />

@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 //todo support toggling dark and light modes with the overall app theme
-import { solarizedlight, gruvboxDark  } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { solarizedlight, gruvboxDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
 
 
@@ -29,9 +29,9 @@ export default function ChatBubble(props: ChatBubbleProps) {
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
 
   const syntaxComponents = {
-    code({node, inline, className, children, ...props}: any) {
+    code({ node, inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || '')
-      return !inline && match 
+      return !inline && match
         ? <SyntaxHighlighter style={gruvboxDark} language={match[1]} PreTag="div" children={String(children).replace(/\n$/, '')} {...props} />
         : <code className={className} {...props}>{children}</code>
     }
@@ -47,9 +47,9 @@ export default function ChatBubble(props: ChatBubbleProps) {
       console.error('Failed to copy text: ', err);
     }
   };
-  
+
   return (
-    <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
+    <Box sx={{ maxWidth: '80%', minWidth: 'auto' }}>
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -109,8 +109,9 @@ export default function ChatBubble(props: ChatBubbleProps) {
                   ? 'var(--joy-palette-common-white)'
                   : 'var(--joy-palette-text-primary)',
               }}
-            >  <ReactMarkdown components={syntaxComponents} >
-              {content}
+            >
+              <ReactMarkdown className="markdown" components={syntaxComponents} >
+                {content}
               </ReactMarkdown>
             </Typography>
           </Sheet>
@@ -125,16 +126,16 @@ export default function ChatBubble(props: ChatBubbleProps) {
                 p: 1.5,
                 ...(isSent
                   ? {
-                      left: 0,
-                      transform: 'translate(-100%, -50%)',
-                    }
+                    left: 0,
+                    transform: 'translate(-100%, -50%)',
+                  }
                   : {
-                      right: 0,
-                      transform: 'translate(100%, -50%)',
-                    }),
+                    right: 0,
+                    transform: 'translate(100%, -50%)',
+                  }),
               }}
             >
-            
+
               <IconButton
                 variant={'plain'}
                 color={'neutral'}
