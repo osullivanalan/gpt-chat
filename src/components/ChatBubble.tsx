@@ -11,19 +11,16 @@ import { MessageProps } from '../types';
 import { formatDateTimeString } from '../utils';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-
-//todo support toggling dark and light modes with the overall app theme
 import { solarizedlight, gruvboxDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
-
 
 type ChatBubbleProps = MessageProps & {
   variant: 'sent' | 'received';
 };
 
-export default function ChatBubble(props: ChatBubbleProps) {
+const ChatBubble: React.FC<ChatBubbleProps> = React.memo((props: ChatBubbleProps) => {
+ 
   const { content, variant, timestamp, attachment = undefined, sender } = props;
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
@@ -35,15 +32,14 @@ export default function ChatBubble(props: ChatBubbleProps) {
         ? <SyntaxHighlighter style={gruvboxDark} language={match[1]} PreTag="div" children={String(children).replace(/\n$/, '')} {...props} />
         : <code className={className} {...props}>{children}</code>
     }
-  }
+  };
 
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
       toast.success('Text copied to clipboard'); // Show success toast
-      // You can show a success message here if you want
     } catch (err) {
-      toast.success('Failed to copy text'); // Show success toast
+      toast.error('Failed to copy text'); // Show error toast
       console.error('Failed to copy text: ', err);
     }
   };
@@ -110,12 +106,12 @@ export default function ChatBubble(props: ChatBubbleProps) {
                   : 'var(--joy-palette-text-primary)',
               }}
             >
-              <ReactMarkdown className="markdown" components={syntaxComponents} >
+              <ReactMarkdown className="markdown" components={syntaxComponents}>
                 {content}
               </ReactMarkdown>
             </Typography>
           </Sheet>
-          {(isHovered) && (
+          {isHovered && (
             <Stack
               direction="row"
               justifyContent={isSent ? 'flex-end' : 'flex-start'}
@@ -135,16 +131,13 @@ export default function ChatBubble(props: ChatBubbleProps) {
                   }),
               }}
             >
-
               <IconButton
                 variant={'plain'}
                 color={'neutral'}
                 size="sm"
-                //onClick={() => setIsCelebrated((prevState) => !prevState)}
-                onClick={() => copyToClipboard(content)} // Add this line
+                onClick={() => copyToClipboard(content)}
               >
                 <CopyToClipBoardIcon />
-
               </IconButton>
             </Stack>
           )}
@@ -152,4 +145,12 @@ export default function ChatBubble(props: ChatBubbleProps) {
       )}
     </Box>
   );
-}
+}, (prevProps, nextProps) => {
+  // Check if the relevant message properties are the same
+  return prevProps.content === nextProps.content &&
+    prevProps.variant === nextProps.variant &&
+    prevProps.timestamp === nextProps.timestamp &&
+    prevProps.sender.name === nextProps.sender.name
+});
+
+export default ChatBubble;

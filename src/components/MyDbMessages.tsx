@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Sheet from '@mui/joy/Sheet';
 
 import MessagesPane from './MessagesPane';
@@ -7,37 +7,33 @@ import ChatsPane from './ChatsPane';
 import { ChatProps, MessageProps } from '../types';
 import IndexedDBHelper from '../IndexedDBHelper';
 import { ChatGPTAPI } from '../ChatGPTAPI';
-import useTypewriterEffect from '../utils/typewritereffect'; // Import the custom hook
 
-export default function MyProfile() {
+const MyProfile: React.FC = React.memo(() => {
   const [chats, setChats] = useState<ChatProps[]>([]);
   const [selectedChat, setSelectedChat] = useState<ChatProps | null>(null);
 
+  // Effect to load chats initially
   useEffect(() => {
     const loadChats = async () => {
       const loadedChats = await IndexedDBHelper.getAllChats();
       setChats(loadedChats);
-      setSelectedChat(loadedChats[0]);
+      if (loadedChats.length > 0) {
+        setSelectedChat(loadedChats[0]);
+      }
     };
 
     loadChats();
   }, []);
 
-  if (!selectedChat) {
-    return null; // or a loading indicator
-  }
-
-
-  const handleNewMessage = async (content: string) => {
-    if (!selectedChat) return;
+  // Memoized callback for adding a new message
+  const handleNewMessage = useCallback(async (content: string) => {
+    if (!selectedChat) return; // Bail out if selectedChat is not available
 
     const newMessage: MessageProps = {
       id: Date.now().toString(), // Generate a unique ID for the new message
       content,
       timestamp: new Date().toISOString(),
-      sender: {
-        name: 'You'
-      },
+      sender: { name: 'You' },
     };
 
     // Update the selected chat with the new message
@@ -48,11 +44,8 @@ export default function MyProfile() {
 
     // Update the chat in the IndexedDB
     await IndexedDBHelper.updateChat(updatedChat);
-
-    setSelectedChat(updatedChat); //display the question
-
-    // Make a request to the Chat GPT API with the chat history
-    //const gptResponse = await ChatGPTAPI.getReply(updatedChat.messages);
+    
+    setSelectedChat(updatedChat);
 
     const stream = await ChatGPTAPI.getReply(updatedChat.messages);
 
@@ -61,27 +54,42 @@ export default function MyProfile() {
       id: Date.now().toString(),
       content: gptResponse,
       timestamp: new Date().toISOString(),
-      sender: {
-        name: 'GPT'
-      },
+      sender: { name: 'GPT' }
     };
 
-    updatedChat.messages.push(gptMessage);
+    // Append the initial GPT message to the updated chat
+    setSelectedChat(prevChat => {
+      if (!prevChat) return prevChat;
+      const newMessages = [...prevChat.messages, gptMessage];
+      return { ...prevChat, messages: newMessages };
+    });
+    
 
     for await (const chunk of stream) {
-      gptResponse += chunk.choices[0]?.delta?.content || '';
-      gptMessage.content = gptResponse;
-  
-      setSelectedChat({...updatedChat});
-  
-      if (chunk.choices[0]?.finish_reason === "stop") { //hacky??
-        await IndexedDBHelper.updateChat(updatedChat);
-        setChats(chats.map(chat => chat.id === updatedChat.id ? updatedChat : chat));
-      }
+      gptResponse += (chunk.choices[0]?.delta?.content || '');
+      setSelectedChat(prevChat => {
+        if (!prevChat) return prevChat;
+        const updatedMessages = prevChat.messages.map(message =>
+          message.id === gptMessage.id ? { ...message, content: gptResponse } : message
+        );
+        const updatedChat = { ...prevChat, messages: updatedMessages };
+        
+        if (chunk.choices[0]?.finish_reason === "stop") {
+          IndexedDBHelper.updateChat(updatedChat).then(() => {
+            setChats(chats => chats.map(chat => chat.id === updatedChat.id ? { ...updatedChat, messages: [...updatedChat.messages] } : chat));
+          });
+        }
+        return { ...prevChat, messages: updatedMessages };
+      });
     }
+  }, [selectedChat]);
 
-  };
+  
 
+  // If no chat is selected, render nothing or a loading state
+  if (!selectedChat) {
+    return null; // or a loading indicator
+  }
 
   return (
     <Sheet
@@ -120,4 +128,6 @@ export default function MyProfile() {
       <MessagesPane chat={selectedChat} handleNewMessage={handleNewMessage} />
     </Sheet>
   );
-}
+});
+
+export default MyProfile;

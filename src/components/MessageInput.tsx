@@ -12,38 +12,36 @@ export type MessageInputProps = {
   textAreaValue: string;
   setTextAreaValue: (value: string) => void;
   handleNewMessage: (message: string) => void;
-  //handlePreviewMessage: (message: string) => void;  // New callback for preview message
 };
 
 export default function MessageInput(props: MessageInputProps) {
   const { textAreaValue, setTextAreaValue, handleNewMessage } = props;
-  //const [previewMessage, setPreviewMessage] = React.useState(''); // New state for preview message
   const textAreaRef = React.useRef<HTMLDivElement>(null);
 
-  //forward slash commands to load prompts
   const [isCommandMode, setIsCommandMode] = React.useState(false);
   const [searchResults, setSearchResults] = React.useState<{ act: string; prompt: string; }[]>([]);
   const [searchText, setSearchText] = React.useState('');
-
-
   const [selectedResultIndex, setSelectedResultIndex] = React.useState(0);
+
   useEffect(() => {
     const handleKeyDown = (event: { key: string; }) => {
-      if (event.key === 'ArrowUp') {
-        setSelectedResultIndex((oldIndex) => Math.max(0, oldIndex - 1));
-      } else if (event.key === 'ArrowDown') {
-        setSelectedResultIndex((oldIndex) => Math.min(searchResults.length - 1, oldIndex + 1));
-      } else if (event.key === 'Enter') {
-        setTextAreaValue(searchResults[selectedResultIndex].prompt);
-        setIsCommandMode(false);
-        setSearchResults([]);
+      if (searchResults.length > 0) {
+        if (event.key === 'ArrowUp') {
+          setSelectedResultIndex((oldIndex) => Math.max(0, oldIndex - 1));
+        } else if (event.key === 'ArrowDown') {
+          setSelectedResultIndex((oldIndex) => Math.min(searchResults.length - 1, oldIndex + 1));
+        } else if (event.key === 'Enter' && searchResults[selectedResultIndex]) {
+          setTextAreaValue(searchResults[selectedResultIndex].prompt);
+          setIsCommandMode(false);
+          setSearchResults([]);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
 
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [searchResults, selectedResultIndex]);
+  }, [searchResults, selectedResultIndex, setTextAreaValue]);
 
   function handleTextAreaChange(event: { target: { value: any; }; }) {
     const value = event.target.value;
@@ -75,20 +73,13 @@ export default function MessageInput(props: MessageInputProps) {
     if (textAreaValue.trim() !== '') {
       handleNewMessage(textAreaValue);
       setTextAreaValue('');
-      //setPreviewMessage(''); // Clear preview message when sent
     }
   };
-
-  /*React.useEffect(() => {
-    handlePreviewMessage(textAreaValue);  // Update preview message when text area value changes
-  }, [textAreaValue, handlePreviewMessage]);
-  */
 
   return (
     <Box sx={{ px: 2, pb: 3 }}>
       <FormControl>
         {isCommandMode && searchResults.length > 0 && (
-
           <Box
             sx={{
               boxSizing: 'border-box',
@@ -113,7 +104,6 @@ export default function MessageInput(props: MessageInputProps) {
                     backgroundColor: 'background.backdrop',
                     borderRadius: 1,
                     border: index === selectedResultIndex ? '1px solid #0d6efd' : 'none',
-
                   }}
                   onClick={() => {
                     setTextAreaValue(result.prompt);
@@ -145,10 +135,7 @@ export default function MessageInput(props: MessageInputProps) {
           aria-label="Message"
           ref={textAreaRef}
           onKeyDown={handleTextAreaKeyDown}
-          onChange={
-            //(e) => {setTextAreaValue(e.target.value);}
-            handleTextAreaChange
-          }
+          onChange={handleTextAreaChange}
           value={textAreaValue}
           minRows={3}
           maxRows={10}
@@ -182,11 +169,7 @@ export default function MessageInput(props: MessageInputProps) {
             },
           }}
         />
-
-
-
       </FormControl>
-
     </Box>
   );
 }
