@@ -1,3 +1,4 @@
 .markdown {
   max-width: 820px;
+  overflow: scroll;
 }
