@@ -1,14 +1,13 @@
-import * as React from 'react';
 import Stack from '@mui/joy/Stack';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
-import { Box, Chip, IconButton, Input, ListDivider } from '@mui/joy';
+import { Box, Chip, IconButton, Input } from '@mui/joy';
 import List from '@mui/joy/List';
 
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
-import { ChatProps, ChatsPaneProps, MessageProps } from '../types';
+import { ChatsPaneProps } from '../types';
 import { toggleMessagesPane } from '../utils';
 import IndexedDBHelper from '../IndexedDBHelper';
 import SettingsMenu from './SettingsMenu';
@@ -16,6 +15,10 @@ import SettingsMenu from './SettingsMenu';
 export default function ChatsPane(props: ChatsPaneProps) {
 
   const { chats, setChats, setSelectedChat, selectedChatId } = props;
+
+  const sortedChats = [...chats].sort((a, b) => 
+    Number(b.id) - Number(a.id)
+  );
 
   const deleteChat = async (chatId: string) => {
     // Delete the chat from the database
@@ -98,7 +101,7 @@ export default function ChatsPane(props: ChatsPaneProps) {
           overflowY: 'auto'
         }}
       >
-        {chats.map((chat) => (
+        {sortedChats.map((chat) => (
           <ChatListItem
             key={chat.id}
             {...chat}
