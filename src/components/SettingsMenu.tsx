@@ -79,20 +79,17 @@ export default function SettingsMenu(props: ChatsPaneProps) {
                     <ColorSchemeToggle sx={{ ml: 'auto' }} />
                 </ListItemButton>
             </ListItem>
-            <ListItem sx={{ ml: 'auto' }}> {/* This auto margin pushes the element to the right */}
-                <Box display="flex" alignItems="center">
-                    <IconButton
-                        variant="plain"
-                        aria-label="add new chat"
-                        color="neutral"
-                        size="sm"
-                        onClick={createNewMesssageThread}
-                        sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center' }} // Align items center for proper alignment and adjust display rule
-                    >
-                        <Typography sx={{ mr: 1 }}>New Chat</Typography>
-                        <MessageIcon />
-                    </IconButton>
-                </Box>
+            <ListItem sx={{ ml: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}> {/* Auto margin and flex properties align the element to the right */}
+                <IconButton
+                    variant="plain"
+                    aria-label="add new chat"
+                    color="neutral"
+                    size="sm"
+                    onClick={createNewMesssageThread}
+                >
+                    <Typography sx={{ mr: 1 }}>New Chat</Typography>
+                    <MessageIcon />
+                </IconButton>
             </ListItem>
         </List>
     )
