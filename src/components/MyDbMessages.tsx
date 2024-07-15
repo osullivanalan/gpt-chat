@@ -132,7 +132,7 @@ const MyProfile: React.FC = React.memo(() => {
           transition: 'transform 0.4s, width 0.4s',
           zIndex: 100,
           width: '100%',
-          top: 52,
+          //top: 52, //to allow for the header
         }}
       >
         <ChatsPane

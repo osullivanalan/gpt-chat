@@ -42,7 +42,7 @@ export default function Settings() {
         }
     }
 
-    function handleInputChange(event) {
+    function handleInputChange(event: { target: { name: any; value: any; }; }) {
         const {name, value} = event.target;
         //console.log(`name: ${name} value ${value}`);
         setSettings((prevState) => 

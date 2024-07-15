@@ -132,6 +132,7 @@ export default class IndexedDBHelper {
       };
     });
   }
+  
 
   static async getAllChats(): Promise<ChatProps[]> {
     const db = await IndexedDBHelper.initDB();

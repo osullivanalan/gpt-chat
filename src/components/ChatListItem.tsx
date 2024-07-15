@@ -2,29 +2,25 @@ import * as React from 'react';
 import Box from '@mui/joy/Box';
 import ListDivider from '@mui/joy/ListDivider';
 import ListItem from '@mui/joy/ListItem';
-import ListItemButton, { ListItemButtonProps } from '@mui/joy/ListItemButton';
+import ListItemButton from '@mui/joy/ListItemButton';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
-import AvatarWithStatus from './AvatarWithStatus';
-import { ChatProps, MessageProps, UserProps } from '../types';
+import CloseRounded from '@mui/icons-material/CloseRounded';
+import { ChatListItemProps} from '../types';
 import { toggleMessagesPane, formatDateTimeString } from '../utils';
-
-type ChatListItemProps = ListItemButtonProps & {
-  id: string;
-  unread?: boolean;
-  sender: UserProps;
-  messages: MessageProps[];
-  selectedChatId?: string;
-  setSelectedChat: (chat: ChatProps) => void;
-};
+import { useState } from 'react';
 
 export default function ChatListItem(props: ChatListItemProps) {
-  const { id, sender, messages, selectedChatId, setSelectedChat } = props;
+  const { id, sender, messages, selectedChatId, setSelectedChat, deleteChat } = props;
   const selected = selectedChatId === id;
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <React.Fragment>
-      <ListItem>
+      <ListItem
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <ListItemButton
           onClick={() => {
             toggleMessagesPane();
@@ -39,11 +35,11 @@ export default function ChatListItem(props: ChatListItemProps) {
           }}
         >
           <Stack direction="row" spacing={1.5}>
-           {/*<AvatarWithStatus online={sender.online} src={sender.avatar} /> */} 
+            {/*<AvatarWithStatus online={sender.online} src={sender.avatar} /> */}
             <Box sx={{ flex: 1 }}>
               <Typography level="title-sm">{sender.name} {messages.length} Messages</Typography>
               {/*<Typography level="body-sm">{sender.username}</Typography>*/}
-              
+
             </Box>
             <Box
               sx={{
@@ -59,9 +55,10 @@ export default function ChatListItem(props: ChatListItemProps) {
                 display={{ xs: 'none', md: 'block' }}
                 noWrap
               >
-               {formatDateTimeString(messages[messages.length-1].timestamp)}
+                {formatDateTimeString(messages[messages.length - 1].timestamp)}
               </Typography>
             </Box>
+
           </Stack>
           <Typography
             level="body-sm"
@@ -75,8 +72,24 @@ export default function ChatListItem(props: ChatListItemProps) {
           >
             {
               messages[1]?.content //assumes 2nd message is from You
-            } 
+            }
           </Typography>
+
+          {isHovered && (
+            <CloseRounded
+              sx={{
+                position: 'absolute',
+                bottom: 2, // adjust as needed
+                right: 8, // adjust as needed
+                cursor: 'pointer',
+              }}
+              onClick={(e) => {
+                e.stopPropagation(); // to prevent triggering the ListItemButton's onClick
+                deleteChat(id);
+              }}
+            />
+          )}
+
         </ListItemButton>
       </ListItem>
       <ListDivider sx={{ margin: 0 }} />

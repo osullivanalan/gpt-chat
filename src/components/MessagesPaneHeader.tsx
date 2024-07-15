@@ -21,14 +21,15 @@ type MessagesPaneHeaderProps = {
 
 export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
   const { sender } = props;
-  
+
   const settingsContext = useContext(SettingsContext);
 
-    if (!settingsContext) {
-        throw new Error('Settings must be used within a SettingsProvider');
-    }
+  if (!settingsContext) {
+    throw new Error('Settings must be used within a SettingsProvider');
+  }
 
-    const { openSettings, setSettingsOpen, settings } = settingsContext;
+  const { settings } = settingsContext;
+  
   return (
     <Stack
       direction="row"
@@ -84,26 +85,8 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
           <Typography level="body-sm">Model: {settings?.model}</Typography>
         </div>
       </Stack>
-      <Stack spacing={1} direction="row" alignItems="center">
-        <Button
-          startDecorator={<SettingsApplicationsRounded />}
-          color="neutral"
-          variant="outlined"
-          size="sm"
-          sx={{
-            display: { xs: 'none', md: 'inline-flex' },
-          }}
-                onClick={() => setSettingsOpen(true)} // Open the modal here
-        >
-          Settings
-        </Button>
-        {/*
-        <IconButton size="sm" variant="plain" color="neutral">
-          <MoreVertRoundedIcon />
-        </IconButton>
-        */}
-      </Stack>
-      
+     
+
     </Stack>
   );
 }

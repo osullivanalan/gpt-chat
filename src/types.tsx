@@ -1,3 +1,4 @@
+import { ListItemButtonProps } from "@mui/joy/ListItemButton";
 import { ReactNode } from "react";
 
 export type UserProps = {
@@ -44,6 +45,24 @@ export type ChatProps = {
   id: string;
   sender: UserProps;
   messages: MessageProps[];
+};
+
+export type ChatsPaneProps = {
+  chats: ChatProps[];
+  setSelectedChat: (chat: ChatProps) => void;
+  setChats: (chats: ChatProps[]) => void;
+  selectedChatId: string;
+};
+
+
+export type ChatListItemProps = ListItemButtonProps & {
+  id: string;
+  unread?: boolean;
+  sender: UserProps;
+  messages: MessageProps[];
+  selectedChatId?: string;
+  setSelectedChat: (chat: ChatProps) => void;
+  deleteChat: (chatId: string) => void; // add this line
 };
 
 export type ModelProps = {

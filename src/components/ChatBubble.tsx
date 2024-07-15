@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight, gruvboxDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
+import { useColorScheme } from '@mui/joy/styles';
 
 type ChatBubbleProps = MessageProps & {
   variant: 'sent' | 'received';
@@ -24,12 +25,17 @@ const ChatBubble: React.FC<ChatBubbleProps> = React.memo((props: ChatBubbleProps
   const { content, variant, timestamp, attachment = undefined, sender } = props;
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
+  const { mode, setMode } = useColorScheme();
 
   const syntaxComponents = {
     code({ node, inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || '')
       return !inline && match
-        ? <SyntaxHighlighter style={gruvboxDark} language={match[1]} PreTag="div" children={String(children).replace(/\n$/, '')} {...props} />
+        ? <SyntaxHighlighter 
+        style={mode === 'dark' ? gruvboxDark : solarizedlight}
+        language={match[1]} 
+        PreTag="div" 
+        children={String(children).replace(/\n$/, '')} {...props} />
         : <code className={className} {...props}>{children}</code>
     }
   };
@@ -104,9 +110,14 @@ const ChatBubble: React.FC<ChatBubbleProps> = React.memo((props: ChatBubbleProps
                 color: isSent
                   ? 'var(--joy-palette-common-white)'
                   : 'var(--joy-palette-text-primary)',
+                  
               }}
             >
-              <ReactMarkdown className="markdown" components={syntaxComponents}>
+              <ReactMarkdown 
+              className="markdown" 
+              components={syntaxComponents}
+              
+              >
                 {content}
               </ReactMarkdown>
             </Typography>
