@@ -59,15 +59,21 @@ export default function Settings() {
             aria-describedby="modal-desc"
             open={openSettings}
             onClose={() => setSettingsOpen(false)}
-            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center',
+                height: '90vh',
+                
+                }}
         >
             <Sheet
                 variant="outlined"
                 sx={{
-                    maxWidth: 800,
                     borderRadius: 'md',
                     p: 3,
                     boxShadow: 'lg',
+                    width: {md:'50%'}
                 }}
             >
                 <ModalClose variant="plain" sx={{ m: 1 }} />
@@ -101,7 +107,7 @@ export default function Settings() {
                             <Stack
                                 direction="row"
                                 spacing={3}
-                                sx={{ display: { xs: 'none', md: 'flex' }, my: 1 }}
+                                sx={{ display: { xs: 'flex', md: 'flex' }, my: 1 }}
                             >
                                 <Stack spacing={2} sx={{ flexGrow: 1 }}>
                                     <Stack spacing={1}>

@@ -4,7 +4,7 @@ import Box from '@mui/joy/Box';
 //import Header from './components/Header';
 import MyDbMessages from './components/MyDbMessages';
 import { ToastContainer } from 'react-toastify';
-import Settings from './components/Settings';
+import SettingsModal from './components/SettingsModal';
 import { SettingsProvider } from './contexts/SettingsProvider'
 import './index.css';
 
@@ -20,7 +20,7 @@ export default function App() {
           <Box component="main" className="MainContent" sx={{ flex: 1 }}>
             <MyDbMessages />
             <ToastContainer />
-            <Settings />
+            <SettingsModal />
           </Box>
         </Box>
       </CssVarsProvider>

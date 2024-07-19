@@ -12,7 +12,6 @@ export const SettingsProvider = ({ children }) => {
     const fetchSettings = async () => {
       const fetchedSettings = await IndexedDBHelper.getSettings();
       setSettings(fetchedSettings);
-      console.log(fetchedSettings)
     };
 
     fetchSettings();

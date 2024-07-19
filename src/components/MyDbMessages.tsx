@@ -16,7 +16,7 @@ const MyProfile: React.FC = React.memo(() => {
       const loadedChats = await IndexedDBHelper.getAllChats();
       setChats(loadedChats);
       if (loadedChats.length > 0) {
-        setSelectedChat(loadedChats[0]);
+        setSelectedChat(loadedChats[loadedChats.length-1]);
       }
     };
 
