@@ -35,6 +35,9 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
       direction="row"
       justifyContent="space-between"
       sx={{
+        position: {xs: 'sticky', md: 'relative'},
+        top: {xs: 0, md: 'auto'},
+        zIndex: 1,
         borderBottom: '1px solid',
         borderColor: 'divider',
         backgroundColor: 'background.body',
