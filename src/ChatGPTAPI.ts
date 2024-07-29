@@ -27,6 +27,11 @@ class ChatGPTAPI {
         const stream = await openai.chat.completions.create({
             model: settings.model || 'gpt-4',
             messages: formattedMessages,
+            frequency_penalty: settings.frequencePenalty,
+            presence_penalty: settings.presencePenalty,
+            top_p: settings.topp,
+            temperature: settings.temperature,
+            max_tokens: settings.maxtokens,
             stream: true,
         });
 

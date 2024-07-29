@@ -22,13 +22,13 @@ export type MessageProps = {
 
 
 export type SettingProps = {
-  apiKey: string;
+  apiKey?: string;
   temperature: number;
   model: string;
   topp: number;
   maxtokens: number;
   presencePenalty: number;
-  frequencePenalty: number;
+  frequencyPenalty: number;
   historyCompression: number;
   sendMemory: boolean;
 }

@@ -28,6 +28,9 @@ export default function ChatsPane(props: ChatsPaneProps) {
     const updatedChats = chats.filter(chat => chat.id !== chatId);
   
     setChats(updatedChats);
+
+    setSelectedChat(updatedChats[updatedChats.length-1]);
+
   };
 
   return (

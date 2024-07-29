@@ -1,4 +1,5 @@
 import { ChatProps, SettingProps } from './types';
+import {DefaultGptModelSettings} from './utils/consts';
 
 const defaultChat: ChatProps = {
   id: '1',
@@ -37,14 +38,7 @@ export default class IndexedDBHelper {
             {
               id: '1',
               apiKey: '',
-              temperature: 0.5,
-              model: "gpt-4",
-              topp: 1,
-              maxtokens: 4000,
-              presencePenalty: 0,
-              frequencyPenalty: 0,
-              historyCompression: 1000,
-              sendMemory: true
+             ...DefaultGptModelSettings
             }
           );
           chatsStore.add(defaultChat);
