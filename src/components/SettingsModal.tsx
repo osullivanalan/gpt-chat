@@ -29,6 +29,8 @@ import { DefaultGptModelSettings } from '../utils/consts';
 
 export default function Settings() {
 
+    const numericFields = ["temperature", "topp", "maxtokens", "presencePenalty", "frequencyPenalty", "historyCompression"];
+
     const settingsContext = useContext(SettingsContext);
 
     if (!settingsContext) {
@@ -76,9 +78,14 @@ export default function Settings() {
     }
 
     // Generic input change handler
-    async function handleInputChange(event: { target: { name: string; type: string; checked: boolean; value: string; }; }) {
+    async function handleInputChange(event: { target: { name: string; type: string; checked: boolean; value: any; }; }) {
         const { name, type, value, checked } = event.target;
-        const newValue = type === 'checkbox' ? checked : value;
+        let newValue = type === 'checkbox' ? checked : value;
+        // Check if the field should be numeric
+        if (numericFields.includes(name)) {
+            // Convert to number if it's not already
+            newValue = isNaN(Number(newValue)) ? 0 : Number(newValue);
+        }
         updateSettings(name, newValue);
 
     };
@@ -218,17 +225,17 @@ export default function Settings() {
                                                 name="presencePenalty"
                                                 size="sm"
                                                 placeholder=""
-
-                                                value={settings?.presencePenalty} onChange={handleInputChange} />
+                                                value={settings?.presencePenalty}
+                                                onChange={handleInputChange} />
 
                                         </FormControl>
-                                        <FormLabel>Presence Penalty</FormLabel>
+                                        <FormLabel>Frequency Penalty</FormLabel>
                                         <FormHelperText>Larger value decreases likelihood of repeated responses</FormHelperText>
                                         <FormControl
                                             sx={{ display: { sm: 'flex-column', md: 'flex-row' }, gap: 2 }}
                                         >
                                             <Input
-                                                name="frequencePenalty"
+                                                name="frequencyPenalty"
                                                 size="sm"
                                                 placeholder=""
                                                 value={settings?.frequencyPenalty}

@@ -57,9 +57,9 @@ export default class IndexedDBHelper {
     });
   }
 
-  static async getSettings(): Promise<{ id: string, apiKey: string, temperature: number, model: string, topp:number, maxtokens:number, presencePenalty:number, frequencePenalty: number, historyCompression: number, sendMemory:boolean }> {
+  static async getSettings(): Promise<{ id: string, apiKey: string, temperature: number, model: string, topp:number, maxtokens:number, presencePenalty:number, frequencyPenalty: number, historyCompression: number, sendMemory:boolean }> {
     const db = await IndexedDBHelper.initDB();
-    return new Promise<{ id: string, apiKey: string, temperature: number, model: string, topp:number, maxtokens:number, presencePenalty:number, frequencePenalty: number, historyCompression: number, sendMemory:boolean  }>((resolve, reject) => {
+    return new Promise<{ id: string, apiKey: string, temperature: number, model: string, topp:number, maxtokens:number, presencePenalty:number, frequencyPenalty: number, historyCompression: number, sendMemory:boolean  }>((resolve, reject) => {
       const transaction = db.transaction('settings', 'readonly');
       const settings = transaction.objectStore('settings');
       const request = settings.get('1');
