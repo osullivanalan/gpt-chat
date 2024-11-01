@@ -60,8 +60,18 @@ const MyProfile: React.FC = React.memo(() => {
 
     for await (const chunk of stream) {
       const chunkContent = chunk.choices[0]?.delta?.content || '';
+      gptResponse += chunkContent;
 
-      for (const char of chunkContent) {
+      setSelectedChat(prevChat => {
+        if (!prevChat) return prevChat;
+        const updatedMessages = prevChat.messages.map(message =>
+          message.id === gptMessage.id ? { ...message, content: gptResponse } : message
+        );
+        updatedChat = { ...updatedChat, messages: updatedMessages };  // Sync the interim state
+        return { ...prevChat, messages: updatedMessages };
+      });
+
+      /*for (const char of chunkContent) {
         gptResponse += char;
 
         setSelectedChat(prevChat => {
@@ -75,6 +85,7 @@ const MyProfile: React.FC = React.memo(() => {
 
         await new Promise(resolve => setTimeout(resolve, 20));  // delay for each character
       }
+      */
 
       if (chunk.choices[0]?.finish_reason === "stop") {
         const finalUpdatedChat = {
