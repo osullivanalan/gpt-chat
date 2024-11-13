@@ -68,6 +68,12 @@ export default function ChatListItem(props: ChatListItemProps) {
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              maxWidth: {
+                sm: '300px', 
+                md: '300px', 
+                lg: '300px', 
+                xl: '300px', 
+              },
             }}
           >
             {
