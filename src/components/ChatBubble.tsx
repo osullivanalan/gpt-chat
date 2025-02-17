@@ -21,23 +21,61 @@ type ChatBubbleProps = MessageProps & {
 };
 
 const ChatBubble: React.FC<ChatBubbleProps> = React.memo((props: ChatBubbleProps) => {
- 
+
   const { content, variant, timestamp, attachment = undefined, sender } = props;
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
   const { mode, setMode } = useColorScheme();
 
-  const syntaxComponents = {
-    code({ node, inline, className, children, ...props }: any) {
-      const match = /language-(\w+)/.exec(className || '')
-      return !inline && match
-        ? <SyntaxHighlighter 
-        style={mode === 'dark' ? gruvboxDark : solarizedlight}
-        language={match[1]} 
-        PreTag="div" 
-        children={String(children).replace(/\n$/, '')} {...props} />
-        : <code className={className} {...props}>{children}</code>
+  //support code block formatting with quick copy to clipboard button
+  const CodeBlock = ({
+    node,
+    inline,
+    className,
+    children,
+    ...props
+  }: any) => {
+    const match = /language-(\w+)/.exec(className || '');
+    // Get the text content while stripping an extra newline if it exists.
+    const codeString = String(children).replace(/\n$/, '');
+
+    // If it is inline code or no language match, fallback to a simple inline rendering.
+    if (inline || !match) {
+      return <code className={className} {...props}>{children}</code>;
     }
+
+    return (
+      <Box sx={{ position: 'relative' }}>
+        <SyntaxHighlighter
+          style={mode === 'dark' ? gruvboxDark : solarizedlight}
+          language={match[1]}
+          PreTag="div"
+          children={codeString}
+          {...props}
+        />
+        <IconButton
+          variant="plain"
+          color="neutral"
+          size="sm"
+          onClick={() => copyToClipboard(codeString)}
+          sx={{
+            position: 'absolute',
+            top: 8,  // adjust vertical position as needed
+            right: 8, // adjust horizontal position as needed
+            backgroundColor: 'background.body',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+          }}
+        >
+          <CopyToClipBoardIcon />
+        </IconButton>
+      </Box>
+    );
+  };
+
+  const syntaxComponents = {
+    code: CodeBlock,
   };
 
   const copyToClipboard = async (text: string) => {
@@ -110,13 +148,13 @@ const ChatBubble: React.FC<ChatBubbleProps> = React.memo((props: ChatBubbleProps
                 color: isSent
                   ? 'var(--joy-palette-common-white)'
                   : 'var(--joy-palette-text-primary)',
-                  
+
               }}
             >
-              <ReactMarkdown 
-              className="markdown" 
-              components={syntaxComponents}
-              
+              <ReactMarkdown
+                className="markdown"
+                components={syntaxComponents}
+
               >
                 {content}
               </ReactMarkdown>
