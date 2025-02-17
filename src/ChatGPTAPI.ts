@@ -28,7 +28,7 @@ class ChatGPTAPI {
             frequency_penalty: number;
             presence_penalty: number;
             top_p: number;
-            temperature: number;
+            temperature?: number;
             stream: boolean;
             max_tokens?: number; // Optional
             max_completion_tokens?: number; // Optional
@@ -40,15 +40,16 @@ class ChatGPTAPI {
             frequency_penalty: settings.frequencyPenalty,
             presence_penalty: settings.presencePenalty,
             top_p: settings.topp,
-            temperature: settings.temperature,
             stream: true,
         };
         
         // Check the model and set the appropriate token property
         if (settings.model === 'o3-mini') {
             completionsOptions.max_completion_tokens = settings.maxtokens;
+            
         } else {
             completionsOptions.max_tokens = settings.maxtokens;
+            completionsOptions.temperature = settings.temperature;
         }
 
         const stream = await openai.chat.completions.create(completionsOptions);
